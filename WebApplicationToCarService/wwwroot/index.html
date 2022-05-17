@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список пользователей</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <h2>Add a auto</h2>
+    <form name="userForm">
+        <input type="hidden" name="id" value="0" />
+        <div class="mb-3">
+            <label class="form-label" for="autoNumber">Auto Number:</label>
+            <input class="form-control" name="autoNumber" />
+        </div>
+        <div class="mb-3">
+            <label for="brand" class="form-label">Brand:</label>
+            <input class="form-control" name="brand" />
+        </div>
+        <div class="mb-3">
+            <label for="color" class="form-label">Color:</label>
+            <input class="form-control" name="color" />
+        </div>
+        <div class="mb-3">
+            <label for="releaseDate" class="form-label">Release Date:</label>
+            <input class="form-control" name="releaseDate" />
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+            <a id="reset" class="btn btn-sm btn-primary">Reset</a>
+        </div>
+    </form>
+    <h2>Auto list</h2>
+    <table class="table table-condensed table-striped table-bordered">
+        <thead><tr><th>Id</th><th>Auto Number</th><th>Brand</th><th>Color</th><th>Release Date</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        async function getAutoList()
+        {
+            const response = await fetch("/api/auto", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const autoList = await response.json();
+                const rows = document.querySelector("tbody");
+                autoList.forEach(auto => rows.append(row(auto)));
+            }
+        }
+
+        async function getAuto(id)
+        {
+            const response = await fetch("/api/auto/" + id, {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok)
+            {
+                const auto = await response.json();
+                const form = document.forms["userForm"];
+                form.elements["id"].value = auto.id;
+                form.elements["autoNumber"].value = auto.autoNumber;
+                form.elements["brand"].value = auto.brand;
+                form.elements["color"].value = auto.color;
+                form.elements["releaseDate"].value = auto.releaseDate;
+            }
+            else
+            {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        async function createAuto(AutoNumber, Brand, Color, ReleaseDate)
+        {
+
+            const response = await fetch("api/auto", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    autoNumber: AutoNumber,
+                    brand: Brand,
+                    color: Color,
+                    releaseDate: ReleaseDate,
+                })
+            });
+            if (response.ok)
+            {
+                const auto = await response.json();
+                reset();
+                document.querySelector("tbody").append(row(auto));
+            }
+            else
+            {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        async function editAuto(Id, AutoNumber, Brand, Color, ReleaseDate)
+        {
+            const response = await fetch("api/auto", {
+                method: "PUT",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    id: Id,
+                    autoNumber: AutoNumber,
+                    brand: Brand,
+                    color: Color,
+                    releaseDate: ReleaseDate,
+                })
+            });
+            if (response.ok)
+            {
+                const auto = await response.json();
+                reset();
+                document.querySelector("tr[data-rowid='" + auto.id + "']").replaceWith(row(auto));
+            }
+            else
+            {
+                const error = await response.json();
+                console.log(error.message);
+            }
+        }
+
+        function reset()
+        {
+            const form = document.forms["userForm"];
+            form.reset();
+            form.elements["id"].value = 0;
+        }
+
+        function row(auto)
+        {
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", auto.id);
+
+            const idTd = document.createElement("td");
+            idTd.append(auto.id);
+            tr.append(idTd);
+
+            const autoNumberTd = document.createElement("td");
+            autoNumberTd.append(auto.autoNumber);
+            tr.append(autoNumberTd);
+
+            const brandTd = document.createElement("td");
+            brandTd.append(auto.brand);
+            tr.append(brandTd);
+
+            const colorTd = document.createElement("td");
+            colorTd.append(auto.color);
+            tr.append(colorTd);
+
+            const releaseDateTd = document.createElement("td");
+            releaseDateTd.append(auto.releaseDate);
+            tr.append(releaseDateTd);
+
+            const linksTd = document.createElement("td");
+
+            const editLink = document.createElement("a");
+            editLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            editLink.append("Edit");
+            editLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                getAuto(auto.id);
+            });
+            linksTd.append(editLink);
+
+            const removeLink = document.createElement("a");
+            removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            removeLink.append("Delete");
+            removeLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                console.log(auto.id);
+                deleteAuto(auto.id);
+            });
+
+            linksTd.append(removeLink);
+            tr.appendChild(linksTd);
+
+            return tr;
+        }
+
+        async function deleteAuto(id)
+        {
+            const response = await fetch("/api/auto/" + id, {
+                method: "DELETE",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok) {
+                const auto = await response.json();
+                document.querySelector("tr[data-rowid='" + auto.id + "']").remove();
+            }
+            else {
+                const error = await response.json();
+            }
+        }
+
+        document.getElementById("reset").addEventListener("click", e => {
+
+            e.preventDefault();
+            reset();
+        })
+
+        document.forms["userForm"].addEventListener("submit", e => {
+            e.preventDefault();
+            const form = document.forms["userForm"];
+            const id = form.elements["id"].value;
+            const autoNumber = form.elements["autoNumber"].value;
+            const brand = form.elements["brand"].value;
+            const color = form.elements["color"].value;
+            const releaseDate = form.elements["releaseDate"].value;
+            if (id == 0)
+                createAuto(autoNumber, brand, color, releaseDate);
+            else
+                editAuto(id, autoNumber, brand, color, releaseDate);
+        });
+
+        getAutoList();
+    </script>
+</body>
+</html>

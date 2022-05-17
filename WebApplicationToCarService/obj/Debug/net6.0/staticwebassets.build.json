@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "Hash": "74o6/LXm/LraRzUCU0jRJIJ86u8obdP4JwXiEQZ85Gc=",
+  "Source": "WebApplicationToCarService",
+  "BasePath": "_content/WebApplicationToCarService",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "WebApplicationToCarService\\wwwroot",
+      "Source": "WebApplicationToCarService",
+      "ContentRoot": "C:\\Users\\emmersmacks\\Documents\\GitHub\\REST Web-servise\\WebApplicationToCarService\\WebApplicationToCarService\\wwwroot\\",
+      "BasePath": "_content/WebApplicationToCarService",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\emmersmacks\\Documents\\GitHub\\REST Web-servise\\WebApplicationToCarService\\WebApplicationToCarService\\wwwroot\\index.html",
+      "SourceId": "WebApplicationToCarService",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\emmersmacks\\Documents\\GitHub\\REST Web-servise\\WebApplicationToCarService\\WebApplicationToCarService\\wwwroot\\",
+      "BasePath": "_content/WebApplicationToCarService",
+      "RelativePath": "index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\index.html"
+    }
+  ]
+}
